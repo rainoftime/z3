@@ -138,14 +138,16 @@ tactic * mk_pp_qfbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
 
     tactic* preamble_st = mk_pp_qfbv_preamble(m, p);
     tactic * st = main_pp(and_then(preamble_st,
-                                            mk_bit_blaster_tactic(m),
+                                     cond(mk_is_qfbv_probe(),
+                                            and_then(mk_bit_blaster_tactic(m),
                                                      when(mk_lt(mk_memory_probe(), mk_const_probe(MEMLIMIT)),
                                                           and_then(using_params(and_then(mk_simplify_tactic(m),
                                                                                          mk_solve_eqs_tactic(m)),
                                                                                 local_ctx_p),
                                                                                      using_params(mk_aig_tactic(),
                                                                                                   big_aig_p))),
-                                                     sat));
+                                                     sat),
+                                             mk_smt_tactic(m))));
     st->updt_params(p);
     return st;
 
@@ -153,7 +155,10 @@ tactic * mk_pp_qfbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
 
 tactic * mk_pp_qfbv_light_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
     tactic* preamble_st = mk_pp_qfbv_light_preamble(m, p);
-    tactic * st = main_pp(and_then(preamble_st,mk_bit_blaster_tactic(m),sat));
+    tactic * st = main_pp(and_then(preamble_st, 
+                                    cond(mk_is_qfbv_probe(), 
+                                          and_then(mk_bit_blaster_tactic(m),sat),
+                                          mk_smt_tactic(m))));
     st->updt_params(p);
     return st;
 }
@@ -179,7 +184,7 @@ tactic * mk_pp_qfbv_tactic(ast_manager & m, params_ref const & p) {
 
 ///////////////////////////// Interface /////////////////////////////////
 
-# if 0
+# if 1
 // replace using our tactic...
 tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p) {
     // std::cout << "Using AUFBV tactic..\n";
@@ -188,12 +193,12 @@ tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p) {
                             mk_psat_tactic(m, p));
 
     return mk_pp_qfbv_light_tactic(m, p, new_sat);
-    // return mk_pp_qfbv_tactic(m, p, new_sat);
+    //return mk_pp_qfbv_tactic(m, p, new_sat);
 }
 #else
 
 tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p) {
-    // std::cout << "Using AUFBV tactic..\n";
+    //std::cout << "Using AUFBV tactic..\n";
     params_ref main_p;
     main_p.set_bool("elim_and", true);
     main_p.set_bool("sort_store", true);
