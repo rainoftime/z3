@@ -28,7 +28,9 @@ Notes:
 #include "smt/tactic/smt_tactic.h"
 #include "tactic/aig/aig_tactic.h"
 #include "ackermannization/ackermannize_bv_tactic.h"
+#include "sat/sat_solver/inc_sat_solver.h"
 #include "tactic/bv/bvarray2uf_tactic.h"
+#include <iostream>
 
 #define MEMLIMIT 300
 
@@ -115,13 +117,6 @@ static tactic * mk_pp_qfbv_preamble(ast_manager& m, params_ref const& p) {
 
 
 
-tactic * mk_pp_qfbv_light_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
-    tactic* preamble_st = mk_pp_qfbv_light_preamble(m, p);
-    tactic * st = main_pp(and_then(preamble_st,mk_bit_blaster_tactic(m),sat));
-    st->updt_params(p);
-    return st;
-}
-
 
 tactic * mk_pp_qfbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
     params_ref local_ctx_p = p;
@@ -175,10 +170,22 @@ tactic * mk_pp_qfbv_tactic(ast_manager & m, params_ref const & p) {
     return mk_pp_qfbv_tactic(m, p, new_sat);
 }
 
-/////////////////////////////
+///////////////////////////// Interface /////////////////////////////////
 
+# if 0
+// replace using our tactic...
+tactic * mk_qfaufbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
+    // std::cout << "Using AUFBV tactic..\n";
+    tactic* preamble_st = mk_pp_qfbv_light_preamble(m, p);
+    tactic * st = main_pp(and_then(preamble_st,mk_bit_blaster_tactic(m),sat));
+    st->updt_params(p);
+    return st;
+}
+
+#else
 
 tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p) {
+    // std::cout << "Using AUFBV tactic..\n";
     params_ref main_p;
     main_p.set_bool("elim_and", true);
     main_p.set_bool("sort_store", true);
@@ -214,3 +221,5 @@ tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p) {
     st->updt_params(p);
     return st;
 }
+
+#endif
