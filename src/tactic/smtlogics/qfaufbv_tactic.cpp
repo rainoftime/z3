@@ -151,9 +151,15 @@ tactic * mk_pp_qfbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
 
 }
 
+tactic * mk_pp_qfbv_light_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
+    tactic* preamble_st = mk_pp_qfbv_light_preamble(m, p);
+    tactic * st = main_pp(and_then(preamble_st,mk_bit_blaster_tactic(m),sat));
+    st->updt_params(p);
+    return st;
+}
 
 tactic * mk_pp_qfbv_light_tactic(ast_manager & m, params_ref const & p) {
-
+    // std::cout << "Using AUFBV tactic..\n";
     tactic * new_sat = cond(mk_produce_proofs_probe(),
                             and_then(mk_simplify_tactic(m), mk_smt_tactic(m)),
                             mk_psat_tactic(m, p));
@@ -170,18 +176,20 @@ tactic * mk_pp_qfbv_tactic(ast_manager & m, params_ref const & p) {
     return mk_pp_qfbv_tactic(m, p, new_sat);
 }
 
+
 ///////////////////////////// Interface /////////////////////////////////
 
 # if 0
 // replace using our tactic...
-tactic * mk_qfaufbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
+tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p) {
     // std::cout << "Using AUFBV tactic..\n";
-    tactic* preamble_st = mk_pp_qfbv_light_preamble(m, p);
-    tactic * st = main_pp(and_then(preamble_st,mk_bit_blaster_tactic(m),sat));
-    st->updt_params(p);
-    return st;
-}
+    tactic * new_sat = cond(mk_produce_proofs_probe(),
+                            and_then(mk_simplify_tactic(m), mk_smt_tactic(m)),
+                            mk_psat_tactic(m, p));
 
+    return mk_pp_qfbv_light_tactic(m, p, new_sat);
+    // return mk_pp_qfbv_tactic(m, p, new_sat);
+}
 #else
 
 tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p) {
