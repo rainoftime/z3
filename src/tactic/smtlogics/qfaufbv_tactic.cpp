@@ -135,6 +135,9 @@ tactic * mk_pp_qfbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
     params_ref big_aig_p;
     big_aig_p.set_bool("aig_per_assertion", false);
 
+    params_ref smt_solver_p;
+    smt_solver_p.set_bool("array.simplify", false); // disable array simplifications at old_simplify module
+
 
     tactic* preamble_st = mk_pp_qfbv_preamble(m, p);
     tactic * st = main_pp(and_then(preamble_st,
@@ -147,18 +150,21 @@ tactic * mk_pp_qfbv_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
                                                                                      using_params(mk_aig_tactic(),
                                                                                                   big_aig_p))),
                                                      sat),
-                                             mk_smt_tactic(m))));
+                                            using_params(mk_smt_tactic(m), smt_solver_p))));
     st->updt_params(p);
     return st;
 
 }
 
 tactic * mk_pp_qfbv_light_tactic(ast_manager& m, params_ref const & p, tactic* sat) {
+    params_ref smt_solver_p;
+    smt_solver_p.set_bool("array.simplify", false); // disable array simplifications at old_simplify module
+
     tactic* preamble_st = mk_pp_qfbv_light_preamble(m, p);
     tactic * st = main_pp(and_then(preamble_st, 
                                     cond(mk_is_qfbv_probe(), 
                                           and_then(mk_bit_blaster_tactic(m),sat),
-                                          mk_smt_tactic(m))));
+                                          using_params(mk_smt_tactic(m), smt_solver_p))));
     st->updt_params(p);
     return st;
 }
