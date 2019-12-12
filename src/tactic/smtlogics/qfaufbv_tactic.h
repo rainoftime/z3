@@ -23,10 +23,27 @@ Notes:
 class ast_manager;
 class tactic;
 
+tactic * mk_pp_qfbv_tactic(ast_manager & m, params_ref const & p = params_ref());
+
+tactic * mk_pp_qfbv_light_tactic(ast_manager & m, params_ref const & p = params_ref());
+
 tactic * mk_qfaufbv_tactic(ast_manager & m, params_ref const & p = params_ref());
 
 /*
   ADD_TACTIC("qfaufbv",  "builtin strategy for solving QF_AUFBV problems.", "mk_qfaufbv_tactic(m, p)")
+
+  ADD_TACTIC("pp_qfbv",  "Solving QF_BV problems.", "mk_pp_qfbv_tactic(m, p)")
+
+  ADD_TACTIC("pp_qfbv_light",  "lightweight strategy for solving QF_BV problems.", "mk_pp_qfbv_light_tactic(m, p)")
 */
+
+
+tactic * mk_pp_qfbv_preamble(ast_manager& m, params_ref const& p);
+
+tactic * mk_pp_qfbv_tactic(ast_manager & m, params_ref const & p, tactic* sat, tactic* smt);
+
+tactic * mk_pp_qfbv_light_preamble(ast_manager& m, params_ref const& p);
+
+tactic * mk_pp_qfbv_light_tactic(ast_manager & m, params_ref const & p, tactic* sat);
 
 #endif
