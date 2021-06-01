@@ -222,6 +222,15 @@ static void parse_cmd_line_args(std::string& input_file, int argc, char ** argv)
                 long lvl = strtol(opt_arg, nullptr, 10);
                 set_verbosity_level(lvl);
             }
+            // {Pinpoint
+            else if (strcmp(opt_name, "C") == 0) {
+                if (!opt_arg)
+                    error("option argument (-C:file) is missing.");
+                //long lvl = strtol(opt_arg, nullptr, 10);
+                //set_verbosity_level(lvl);
+                set_user_tactic_file(opt_arg);
+            }
+            // }
             else if (strcmp(opt_name, "file") == 0) {
                 g_input_file = opt_arg;
             }

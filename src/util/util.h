@@ -165,6 +165,11 @@ struct delete_proc {
     }
 };
 
+// Pinpoint z3 feature {
+void set_user_tactic_file(char const * t);
+char const * get_user_tactic_file();
+// }
+
 void set_verbosity_level(unsigned lvl);
 unsigned get_verbosity_level();
 std::ostream& verbose_stream();

@@ -30,6 +30,8 @@ Notes:
 #include "sat/sat_solver/inc_sat_solver.h"
 #include "ackermannization/ackermannize_bv_tactic.h"
 #include "tactic/smtlogics/smt_tactic.h"
+#include <iostream>
+
 
 #define MEMLIMIT 300
 
@@ -51,6 +53,9 @@ static tactic * mk_qfbv_preamble(ast_manager& m, params_ref const& p) {
     params_ref hoist_p;
     hoist_p.set_bool("hoist_mul", true);
     hoist_p.set_bool("som", false);
+
+	char const * user_tactic_file = get_user_tactic_file();
+	std::cout << user_tactic_file << "(tactic configuration file)\n"; // for testing
 
     return
         and_then(

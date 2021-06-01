@@ -28,6 +28,17 @@ void verbose_lock() { g_verbose_mux.lock(); }
 void verbose_unlock() { g_verbose_mux.unlock(); }
 #endif
 
+// Pinpoint  {
+char const * g_user_tactic_file = "";
+
+void set_user_tactic_file(char const * t) {
+	g_user_tactic_file = t;
+}
+char const * get_user_tactic_file() {
+    return g_user_tactic_file;
+}
+// }
+
 static unsigned g_verbosity_level = 0;
 
 void set_verbosity_level(unsigned lvl) {
